@@ -1,0 +1,153 @@
+<html>
+<head>
+	<title>Today is:</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<style>
+		tr{height: 20px;width:100px}
+		th{text-align:center;background-color:#DB7093;}		
+		td{background-color:#DCDCDC}
+		
+	</style>
+	<script type="text/javascript" >
+
+	today=new Date();
+	theYear=today.getFullYear();
+	theMonth=today.getMonth();
+
+	function changecss(){
+        var myDiv=document.getElementById("myDiv1");
+        css="<style>td{background-color:#DCDCDC}</style>"
+        return css;
+	}
+		
+		function isRunYear(theYear){
+			var tempResult=false;
+			if  (((theYear % 400) == 0) || (((theYear % 4) == 0) && ((theYear % 100) != 0))){
+			    	tempResult=true;
+			}
+			return tempResult;
+		}
+		
+		function haveDays(theYear,theMonth){
+			var tempResult=0;
+			switch (theMonth){
+				case 1:
+				case 3:
+				case 5:
+				case 7:
+				case 8:
+				case 10:
+				case 12:tempResult=31;break;
+				case 4:
+				case 6:
+				case 9:
+				case 11:tempResult=30;break;
+				case 2:tempResult=(isRunYear(theYear))?29:28;break;
+			}
+			return tempResult;	
+		}
+
+		function transMonth(theMonth){
+			var MonthStr="";
+			switch (theMonth){
+				case 0:MonthStr="January";break;
+				case 1:MonthStr="February";break;
+				case 2:MonthStr="March";break;
+				case 3:MonthStr="April";break;
+				case 4:MonthStr="May";break;
+				case 5:MonthStr="June";break;
+				case 6:MonthStr="July";break;
+				case 7:MonthStr="August";break;
+				case 8:MonthStr="September";break;
+				case 9:MonthStr="October";break;
+				case 10:MonthStr="November";break;
+				case 11:MonthStr="December";break;
+
+			}
+			return MonthStr;
+		}
+
+		function today_display(){                                    //做今天是周几
+			var myDiv1=document.getElementById("myDiv1");
+			today=new Date();
+
+			var table1="<table align='center' ><tr><td align='center'>" ;
+			table1+=transMonth(today.getMonth())+","+today.getFullYear()+"</td></tr><tr><td align='center'>"+today.getDate()+"</td></tr><tr><td align='center'>"+today.toString().substr(0,3)+"</td></tr></table>";
+			myDiv1.innerHTML=table1;
+		}
+		
+
+		
+		
+		function new_cal(newYear, newMonth, newDay){
+			var myDiv = document.getElementById("myDiv");
+			var table="<table  align='center' >";
+		    table+="<tr height='30px' ><th align='center' width='50px'>Sun</th><th align='center'  width='50px'>Mon</th><th align='center'  width='50px'>Tue</th><th align='center'  width='50px'>Wed</th><th align='center' width='50px'>Thu</th><th align='center'  width='50px'>Fri</th><th align='center'  width='50px'>Sat</th></tr>"
+			if(newYear==null){
+				today=new Date();
+	            theYear=today.getFullYear();
+	            theMonth=today.getMonth();
+				newYear=theYear;
+				newMonth=theMonth;
+				new_first_day_month=new Date(newYear, newMonth, 1);
+			}else{
+				new_first_day_month=new Date(newYear, newMonth, 1);
+			}
+			var new_blank_before=new_first_day_month.getDay();
+			var new_days=haveDays(theYear,theMonth+1);
+			var row=(new_days+new_blank_before)/7;
+			for (var i=0; i<row; i++){
+				table+="<tr>";
+				for (var j=0; j<7; j++){
+			 		table+=(j==0||j==6)?"<td onclick=\"changecolor(this)\" align='center'  height='20px'><font color='red'>":"<td onclick=\"changecolor(this)\"align='center'>"
+					table+=(new_blank_before>0)?"":((new_days+new_blank_before)>0?-new_blank_before+1:"")
+					table+=(j==0||j==6)?"</font></td>":"</td>"
+			 new_blank_before--;
+				}
+			 table +="</tr>";
+			 }
+			 table+="<tr><td align='center' colspan=7 >"+transMonth(newMonth)+","+new_first_day_month.getFullYear()+"</td></tr></table>"
+		     myDiv.innerHTML=table;			
+		}
+
+		function minus_month(){
+		((theMonth-1)>-1)?new_cal(theYear,--theMonth,1):new_cal((--theYear),theMonth=11,1)
+		}
+		function add_month(){
+		((theMonth+1)<12)?new_cal(theYear,++theMonth,1):(new_cal((++theYear),theMonth=0,1))		
+		}
+
+
+		var item_item="";    //全局变量保存之前那个item，再次点击时复原		
+		function changecolor(item){
+			var myDiv1=document.getElementById("myDiv1");
+			today=new Date(new_first_day_month.getFullYear(), new_first_day_month.getMonth(), item.innerText);
+
+			var table1="<table align='center' ><tr><td align='center'>" ;
+			table1+=transMonth(new_first_day_month.getMonth())+","+new_first_day_month.getFullYear()+"</td></tr><tr><td align='center'>"+item.innerText+"</td></tr><tr><td align='center'>"+today.toString().substr(0,3)+"</td></tr></table>";
+			myDiv1.innerHTML=table1;
+			if(item_item=="")	{
+			item_item=item;	
+			item.style.backgroundColor="white";
+			item.style.color="red";	
+			}else{
+			item_item.style.backgroundColor="#DCDCDC";
+			item_item.style.color="black";
+			item.style.backgroundColor="white";
+			item.style.color="red";	
+			item_item=item;
+		}		
+		}	
+	</script>
+</head><body onload="today_display();new_cal()">
+<div  id="myDiv1" ></div>
+<div  id="myDiv" ></div>
+<table align='center'>
+	<tr>
+	  <td><input id="minus" type="button" value="<<" onclick="minus_month()"></td>
+	  <td><input type="button" value="Today" onclick="today_display();new_cal()"></td>
+	  <td><input id="add" type="button" value=">>" onclick="add_month()"></td>
+	</tr>
+</table>
+</body> 	
+</html>
